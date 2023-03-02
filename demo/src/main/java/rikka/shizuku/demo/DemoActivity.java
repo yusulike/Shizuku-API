@@ -19,7 +19,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Process;
 import android.os.RemoteException;
+import android.os.UserHandle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -189,16 +191,38 @@ public class DemoActivity extends Activity {
 
         return false;
     }
-
+    public static final String ACTION_USER_STOPPED =
+            "android.intent.action.USER_STOPPED";
+    public static final String EXTRA_USER_HANDLE =
+            "android.intent.extra.user_handle";
     private void getUsers() {
         String res;
+        int res2= 0;
+        boolean quietMode = false;
         try {
             res = ShizukuSystemServerApi.UserManager_getUsers(true, true, true).toString();
+
+//            res2 =
+//                ShizukuSystemServerApi.ActivityManager_stopUser(10, true, null);
+
+            // Toggle WorkProfile Mode
+            quietMode = ShizukuSystemServerApi.UserManager_isQuietModeEnabled(10);
+
+            Toast myToast = Toast.makeText(this.getApplicationContext(),
+                    !quietMode? "WorkProfile -> Off": "WorkProfile -> On", Toast.LENGTH_SHORT);
+            myToast.show();
+
+            ShizukuSystemServerApi.UserManager_requestQuietModeEnabled(
+                    "com.android.shell", !quietMode, 10, null, 0);
+
+
+
         } catch (Throwable tr) {
             tr.printStackTrace();
             res = tr.getMessage();
         }
-        binding.text3.setText(res);
+
+        binding.text3.setText(res + "--->" + "\n QuietMode = " + !quietMode);
     }
 
     private void installApks() {
@@ -357,7 +381,7 @@ public class DemoActivity extends Activity {
             }
         } catch (Throwable tr) {
             tr.printStackTrace();
-            res.append(tr.toString());
+            res.append(tr);
         }
         binding.text3.setText(res.toString().trim());
     }
@@ -404,7 +428,7 @@ public class DemoActivity extends Activity {
             }
         } catch (Throwable tr) {
             tr.printStackTrace();
-            res.append(tr.toString());
+            res.append(tr);
         }
         binding.text3.setText(res.toString().trim());
     }
@@ -419,7 +443,7 @@ public class DemoActivity extends Activity {
             }
         } catch (Throwable tr) {
             tr.printStackTrace();
-            res.append(tr.toString());
+            res.append(tr);
         }
         binding.text3.setText(res.toString().trim());
     }
@@ -439,7 +463,7 @@ public class DemoActivity extends Activity {
             }
         } catch (Throwable tr) {
             tr.printStackTrace();
-            res.append(tr.toString());
+            res.append(tr);
         }
         binding.text3.setText(res.toString().trim());
     }

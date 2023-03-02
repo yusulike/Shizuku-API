@@ -1,6 +1,7 @@
 package android.os;
 
 import android.content.pm.UserInfo;
+import android.content.IntentSender;
 
 import androidx.annotation.RequiresApi;
 
@@ -19,10 +20,20 @@ public interface IUserManager extends IInterface {
     List<UserInfo> getUsers(boolean excludePartial, boolean excludeDying, boolean excludePreCreated)
             throws RemoteException;
 
-    abstract class Stub extends Binder implements IUserManager {
+    boolean isQuietModeEnabled(int userId)
+            throws RemoteException;
 
-        public static IUserManager asInterface(IBinder obj) {
+    boolean requestQuietModeEnabled(boolean enableQuietMode, UserHandle userHandle)
+            throws RemoteException;
+
+    boolean requestQuietModeEnabled(String callingPackage, boolean enableQuietMode, int userId, IntentSender target, int flags)
+            throws RemoteException;
+
+    abstract class Stub extends Binder implements IUserManager {
+        public static android.os.IUserManager asInterface(IBinder obj) {
             throw new RuntimeException("STUB");
         }
     }
 }
+
+

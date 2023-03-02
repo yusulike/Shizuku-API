@@ -47,12 +47,12 @@ public class UserService extends IUserService.Stub {
 
     @Override
     public String doSomething() throws RemoteException {
-        return "pid=" + Os.getpid() + ", uid=" + Os.getuid() + ", " + stringFromJNI();
+        return "pid=" + Os.getpid() + ", uid=" + Os.getuid();
     }
 
-    static {
-        System.loadLibrary("hello-jni");
-    }
+    //static {
+    //    System.loadLibrary("hello-jni");
+    //}
 
-    public static native String stringFromJNI();
+    //public static native String stringFromJNI();
 }

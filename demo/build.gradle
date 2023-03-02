@@ -12,19 +12,9 @@ android {
         versionCode api_version_code
         versionName api_version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                abiFilters "armeabi-v7a", 'arm64-v8a', 'x86', 'x86_64'
-                cppFlags "-std=c++17"
-                arguments '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static'
-            }
-        }
+
     }
-    externalNativeBuild {
-        cmake {
-            path "src/main/cpp/CMakeLists.txt"
-        }
-    }
+
     buildFeatures {
         viewBinding = true
     }

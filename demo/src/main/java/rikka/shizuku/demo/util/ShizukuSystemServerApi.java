@@ -1,12 +1,16 @@
 package rikka.shizuku.demo.util;
 
+import android.app.IActivityManager;
+import android.app.IStopUserCallback;
 import android.content.Context;
+import android.content.IntentSender;
 import android.content.pm.IPackageInstaller;
 import android.content.pm.IPackageManager;
 import android.content.pm.UserInfo;
 import android.os.Build;
 import android.os.IUserManager;
 import android.os.RemoteException;
+import android.os.UserHandle;
 
 import java.util.List;
 
@@ -29,6 +33,14 @@ public class ShizukuSystemServerApi {
         }
     };
 
+    private static final Singleton<IActivityManager> ACTIVITY_MANAGER = new Singleton<IActivityManager>() {
+        @Override
+        protected IActivityManager create() {
+            return IActivityManager.Stub.asInterface(new ShizukuBinderWrapper(SystemServiceHelper.getSystemService(Context.ACTIVITY_SERVICE)));
+        }
+    };
+
+
     public static IPackageInstaller PackageManager_getPackageInstaller() throws RemoteException {
         IPackageInstaller packageInstaller = PACKAGE_MANAGER.get().getPackageInstaller();
         return IPackageInstaller.Stub.asInterface(new ShizukuBinderWrapper(packageInstaller.asBinder()));
@@ -44,6 +56,26 @@ public class ShizukuSystemServerApi {
                 return USER_MANAGER.get().getUsers(excludePartial, excludeDying, excludePreCreated);
             }
         }
+    }
+
+    public static boolean UserManager_requestQuietModeEnabled(boolean enableQuietMode, UserHandle userHandle) throws RemoteException {
+        return USER_MANAGER.get().requestQuietModeEnabled(enableQuietMode, userHandle);
+    }
+
+    public static boolean UserManager_requestQuietModeEnabled(String callingPackage, boolean enableQuietMode, int userId, IntentSender target, int flags) throws RemoteException {
+        return USER_MANAGER.get().requestQuietModeEnabled(callingPackage, enableQuietMode, userId, target, flags);
+    }
+
+    public static boolean UserManager_isQuietModeEnabled(int userId) throws RemoteException {
+            return USER_MANAGER.get().isQuietModeEnabled(userId);
+    }
+
+    public static int ActivityManager_stopUser(int userid, boolean force, IStopUserCallback callback) throws RemoteException {
+        return ACTIVITY_MANAGER.get().stopUser(userid, force, callback);
+    }
+
+    public static boolean ActivityManager_stopProfile(int userid) throws RemoteException {
+        return ACTIVITY_MANAGER.get().stopProfile(userid);
     }
 
     // method 2: use transactRemote directly
